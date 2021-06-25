@@ -2,7 +2,11 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\User;
+use App\Models\Jual;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\DB;
 
 class HomeController extends Controller
 {
@@ -21,14 +25,23 @@ class HomeController extends Controller
      *
      * @return \Illuminate\Contracts\Support\Renderable
      */
-    public function index()
+    public function userdashboard()
     {
-        return view('home');
+        $semuajual = Jual::all();
+        return view('user.userdashboard',compact('semuajual'));
     }
 
-    //admin home
-    public function adminHome()
+    //jual jasa
+    public function jualjasasemua()
     {
-        return view('admin');
+        $semuajual = Jual::where('kategori_jual','Jasa')->get();
+        return view('user.userjualjasasemua',compact('semuajual'));
+    }
+
+    //jual barang
+    public function jualbarangsemua()
+    {
+        $semuajual = Jual::where('kategori_jual','Barang')->get();
+        return view('user.userjualbarangsemua',compact('semuajual'));
     }
 }

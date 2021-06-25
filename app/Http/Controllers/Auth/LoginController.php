@@ -5,7 +5,7 @@ namespace App\Http\Controllers\Auth;
 use App\Http\Controllers\Controller;
 use App\Providers\RouteServiceProvider;
 use Illuminate\Foundation\Auth\AuthenticatesUsers;
-use Illuminate\Http\Request;
+use Auth;
 
 class LoginController extends Controller
 {
@@ -27,7 +27,30 @@ class LoginController extends Controller
      *
      * @var string
      */
-    protected $redirectTo = RouteServiceProvider::HOME;
+    //protected $redirectTo = RouteServiceProvider::HOME;
+        
+    public function redirectTo()
+    {
+        // Memanggil role dan statususer pada data yang akan login.
+        $isadmin=Auth::user()->is_admin;
+        $statususer=Auth::user()->statususer;
+        if($statususer == "aktif")
+        {
+            // jika statususer == aktif maka masuk kesini, kemudian dikembalikan ke halaman admin atau user
+            switch($isadmin){
+                case 'yes';
+                    return '/admindashboard';
+                break;
+                case 'no';
+                    return '/userdashboard';
+                break;
+            };
+        }
+        else
+        {
+            return'/';
+        }
+    }
 
     /**
      * Create a new controller instance.
@@ -39,23 +62,23 @@ class LoginController extends Controller
         $this->middleware('guest')->except('logout');
     }
 
-    //login
-    public function login(Request $request){
-        $input = $request->all();
+    // //login
+    // public function login(Request $request){
+    //     $input = $request->all();
 
-        $this->validate($request,[
-            'email'=> 'required|email',
-            'password'=>'required',
-        ]);
+    //     $this->validate($request,[
+    //         'email'=> 'required|email',
+    //         'password'=>'required',
+    //     ]);
 
-        if(auth()->attempt(array('email'=>$input['email'], 'password'=>$input['password']))){
-            if(auth()->user()->is_admin == 1){
-                return redirect()->route('admin.home');
-            }else{
-                return redirect()->route('home');
-            }
-        }else{
-            return redirect()->route('login')->with('error','Access Denied!');
-        }
-    }
+    //     if(auth()->attempt(array('email'=>$input['email'], 'password'=>$input['password']))){
+    //         if(auth()->user()->is_admin == 1){
+    //             return redirect()->route('admin.home');
+    //         }else{
+    //             return redirect()->route('home');
+    //         }
+    //     }else{
+    //         return redirect()->route('login')->with('error','Access Denied!');
+    //     }
+    // }
 }

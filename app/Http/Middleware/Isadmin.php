@@ -2,9 +2,9 @@
 
 namespace App\Http\Middleware;
 
+use Auth;
 use Closure;
 use Illuminate\Http\Request;
-
 class Isadmin
 {
     /**
@@ -17,9 +17,10 @@ class Isadmin
     public function handle(Request $request, Closure $next)
     {
         // return $next($request);
-        if(auth()->user()->is_admin==1){
+        if(Auth::check() && Auth::user()->is_admin == 'yes'){
             return $next($request);
+        }else{
+        return redirect('login');
         }
-        return redirect('home')->with('error', "Access Denied");
     }
 }
